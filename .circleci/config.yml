@@ -1,0 +1,25 @@
+version: 2
+jobs:
+  uild:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - run:
+        name: install-cordova
+        command: 'sudo npm install -g cordova'
+      - restore_cache:
+        key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+        name: install-npm-wee
+        command: npm install
+      - save_cache:
+        key: dependency-cache-{{ checksum "package.json" }}
+        paths:
+          - /node_modules
+      - run:
+        name: build-app
+        command: npm run cordova-build-browser
+      - run:
+        name: cordova prepare
+        command: cd src-cordova; cordova prepare
